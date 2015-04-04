@@ -1,6 +1,7 @@
 package com.pastekit.tools.kitten;
 
 import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.search.*;
 import com.google.appengine.tools.remoteapi.LoginException;
 import com.google.appengine.tools.remoteapi.RemoteApiInstaller;
 import com.google.appengine.tools.remoteapi.RemoteApiOptions;
