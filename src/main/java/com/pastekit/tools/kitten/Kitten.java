@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-@Command(name = "kitten", description = "pastekit command line utility")
+@Command(name = "kitten", description = "GAE Datastore command line utility")
 public class Kitten {
 
     @Inject
@@ -33,10 +33,10 @@ public class Kitten {
     @Option(name = {"-P", "--pass"}, description = "GAE Password")
     public String password;
 
-    @Option(name = {"-Q", "--query"}, description = "Query string")
+    @Option(name = {"-Q", "--query"}, description = "GQL Query string")
     public String query;
 
-    @Option(name = {"--update"}, description = "Update values for result data set")
+    @Option(name = {"--update"}, description = "Update values for result data set. E.g. --update property1=value1,property2=value2 etc.")
     public String update;
 
     private static final String EMPTY_NAMESPACE = "";
@@ -52,7 +52,7 @@ public class Kitten {
     }
 
     public void run() throws IOException{
-        System.out.println("Trying to connect to app: " + appId);
+        System.out.println("Connecting to app: " + appId);
         RemoteApiOptions options = new RemoteApiOptions()
                 .server( appId + ".appspot.com", 443)
                 .credentials(username, password);
@@ -110,7 +110,6 @@ public class Kitten {
                     String json = gson.toJson(props);
                     System.out.println(json);
                     System.out.println("************************************************");
-
                 }
             }
             installer.install(options);
@@ -123,7 +122,7 @@ public class Kitten {
         }
     }
 
-    private Map<String, Object> marshalMap(Map<String, String> in) {
+    private static Map<String, Object> marshalMap(Map<String, String> in) {
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         Iterator<Map.Entry<String,String>> it = in.entrySet().iterator();
         while(it.hasNext()){
@@ -150,17 +149,13 @@ public class Kitten {
         return result;
     }
 
-    private Map<String, String> splitToMap(String in) {
+    private static Map<String, String> splitToMap(String in) {
         return Splitter.on(",").withKeyValueSeparator("=").split(in);
     }
 
     public static boolean isNumeric(String string){
         Pattern pattern = Pattern.compile("^-?\\d+(\\.\\d)?$");
         return pattern.matcher(string).matches();
-    }
-
-    private void printEntity(Entity e){
-
     }
 
 }
