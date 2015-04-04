@@ -15,6 +15,7 @@ import io.airlift.airline.SingleCommand;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Command(name = "kitten", description = "pastekit command line utility")
 public class Kitten {
@@ -134,12 +135,15 @@ public class Kitten {
                 result.put(key, val.equalsIgnoreCase("true") ? true : false);
             } else if(val.equalsIgnoreCase("null")) {
                 result.put(key, null);
-            } else {
+            } else if(isNumeric(val)) {
                 try {
                     Long l = Long.valueOf(val);
+                    result.put(key, l);
                 } catch (NumberFormatException e){
-                    throw new RuntimeException("Update parameter(s) contained unsupported type");
+                    throw new RuntimeException("Invalid number: " + val);
                 }
+            } else {
+                throw new RuntimeException("Update parameter(s) contained unsupported type");
             }
         }
         return result;
@@ -147,6 +151,11 @@ public class Kitten {
 
     private Map<String, String> splitToMap(String in) {
         return Splitter.on(",").withKeyValueSeparator("=").split(in);
+    }
+
+    public static boolean isNumeric(String string){
+        Pattern pattern = Pattern.compile("^-?\\d+(\\.\\d)?$");
+        return pattern.matcher(string).matches();
     }
 
     private void printEntity(Entity e){
